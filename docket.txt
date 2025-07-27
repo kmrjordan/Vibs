@@ -1,0 +1,69 @@
+# Use a Python base image
+FROM python:3.9-slim-buster # Or 3.10, 3.11, etc., as per your preference. 'slim-buster' is good for smaller images.
+
+# Install necessary dependencies for Chrome
+# These packages are often required for Chrome to run headless in a Linux environment
+RUN apt-get update && apt-get install -y \
+    wget \
+    gnupg \
+    unzip \
+    fonts-liberation \
+    libappindicator3-1 \
+    libasound2 \
+    libatk-bridge2.0-0 \
+    libatk1.0-0 \
+    libatspi2.0-0 \
+    libcairo2 \
+    libcups2 \
+    libdbus-1-3 \
+    libdrm2 \
+    libgbm1 \
+    libgtk-3-0 \
+    libnspr4 \
+    libnss3 \
+    libxcomposite1 \
+    libxdamage1 \
+    libxext6 \
+    libxfixes3 \
+    libxrandr2 \
+    libxrender1 \
+    libxtst6 \
+    lsb-release \
+    xdg-utils \
+    libu2f-udev \
+    libvulkan1 \
+    libpangocairo-1.0-0 \
+    libgconf-2-4 \
+    libfontconfig1 \
+    libglib2.0-0 \
+    --no-install-recommends && \
+    rm -rf /var/lib/apt/lists/*
+
+# Install Google Chrome Stable
+RUN wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | gpg --dearmor > /etc/apt/trusted.gpg.d/google-archive.gpg && \
+    sh -c 'echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google.list' && \
+    apt-get update && \
+    apt-get install -y google-chrome-stable
+
+# Set environment variables for headless Chrome options
+ENV CHROME_DRIVER_PATH=/usr/local/bin/chromedriver
+ENV GOOGLE_CHROME_BIN=/usr/bin/google-chrome
+
+# Set working directory
+WORKDIR /app
+
+# Copy your requirements file and install Python dependencies
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
+
+# Copy the rest of your application code
+COPY . .
+
+# Ensure the downloads directory exists
+RUN mkdir -p downloads
+
+# Expose the port (FastAPI's default is 8000, Render will map this)
+EXPOSE 8000
+
+# Command to run your FastAPI application
+CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"] # Render's $PORT will override 8000
