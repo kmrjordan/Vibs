@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Naukri Job Scraper & Auto-Apply</title>
+    <link rel="stylesheet" href="{{ url_for('static', path='css/style.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="App">
+        <header class="App-header">
+            <h1>Vibss - Naukri Auto-Apply</h1>
+            <form id="job-form" class="job-form">
+                <div class="form-group">
+                    <label for="username">Username:</label>
+                    <input type="email" id="username" required>
+                </div>
+                <div class="form-group">
+                    <label for="password">Password:</label>
+                    <input type="password" id="password" required>
+                </div>
+                <div class="form-group">
+                    <label for="skill">Skill to Search (e.g., SAP):</label>
+                    <input type="text" id="skill" required>
+                </div>
+                <button type="submit" id="submit-button">Start Job Search & Apply</button>
+            </form>
+
+            <p id="message-display" class="message"></p>
+
+            <div id="loader-container" class="loader-container" style="display: none;">
+                <div class="loader"></div>
+                <p>Please wait, this might take a while as the script is running...</p>
+            </div>
+
+            <div id="results-section" class="results-section" style="display: none;">
+                <h2 id="jobs-applied-count"></h2>
+                <button id="download-button" class="download-button" style="display: none;">Download Jobs CSV</button>
+                <div class="table-container">
+                    <table id="job-table" class="job-table">
+                        <thead>
+                            <tr>
+                                <th>Job Name</th>
+                                <th>Company</th>
+                                <th>Experience</th>
+                                <th>Salary</th>
+                                <th>Location</th>
+                                <th>Key Skills</th>
+                                <th>Link</th>
+                            </tr>
+                        </thead>
+                        <tbody id="job-table-body">
+                            </tbody>
+                    </table>
+                </div>
+            </div>
+        </header>
+    </div>
+
+    <script>
+        // No need for a separate FASTAPI_URL constant.
+        // All API calls are now relative to the current origin.
+
+        // Get DOM elements
+        const jobForm = document.getElementById('job-form');
+        const usernameInput = document.getElementById('username');
+        const passwordInput = document.getElementById('password');
+        const skillInput = document.getElementById('skill');
+        const submitButton = document.getElementById('submit-button');
+        const messageDisplay = document.getElementById('message-display');
+        const loaderContainer = document.getElementById('loader-container');
+        const resultsSection = document.getElementById('results-section');
+        const jobsAppliedCount = document.getElementById('jobs-applied-count');
+        const downloadButton = document.getElementById('download-button');
+        const jobTableBody = document.getElementById('job-table-body');
+
+        let currentDownloadFileName = null; // To store the filename for download
+
+        // Function to display messages
+        function showMessage(msg, type = 'info') {
+            messageDisplay.textContent = msg;
+            messageDisplay.className = 'message'; // Reset classes
+            if (type === 'success') {
+                messageDisplay.classList.add('success');
+            } else if (type === 'error') {
+                messageDisplay.classList.add('error');
+            }
+            messageDisplay.style.display = 'block';
+        }
+
+        // Function to hide messages
+        function hideMessage() {
+            messageDisplay.style.display = 'none';
+        }
+
+        // Function to show/hide loader
+        function showLoader(show) {
+            loaderContainer.style.display = show ? 'flex' : 'none';
+            submitButton.disabled = show;
+            submitButton.textContent = show ? 'Processing...' : 'Start Job Search & Apply';
+        }
+
+        // Function to render job data table
+        function renderJobTable(jobs) {
+            jobTableBody.innerHTML = ''; // Clear existing rows
+            if (jobs && jobs.length > 0) {
+                jobs.forEach(job => {
+                    const row = jobTableBody.insertRow();
+                    row.insertCell().textContent = job.Name;
+                    row.insertCell().textContent = job.Com_name;
+                    row.insertCell().textContent = job.Experience;
+                    row.insertCell().textContent = job.Salary;
+                    row.insertCell().textContent = job.Location;
+                    row.insertCell().textContent = job.Key_Skills;
+                    const linkCell = row.insertCell();
+                    const link = document.createElement('a');
+                    link.href = job.Link;
+                    link.target = '_blank';
+                    link.rel = 'noopener noreferrer';
+                    link.textContent = 'View Job';
+                    linkCell.appendChild(link);
+                });
+                resultsSection.style.display = 'block';
+            } else {
+                resultsSection.style.display = 'none';
+            }
+        }
+
+        // Handle form submission
+        jobForm.addEventListener('submit', async (e) => {
+            e.preventDefault(); // Prevent default form submission
+            hideMessage();
+            showLoader(true);
+            resultsSection.style.display = 'none'; // Hide results section
+            downloadButton.style.display = 'none'; // Hide download button
+            currentDownloadFileName = null; // Reset filename
+
+            const username = usernameInput.value;
+            const password = passwordInput.value;
+            const skill = skillInput.value;
+
+            try {
+                // API call is now relative to the current origin
+                const response = await fetch(`/start-scraper/`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ username, password, skill }),
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    showMessage(data.message, 'success');
+                    jobsAppliedCount.textContent = `Applied to ${data.jobs_applied} Jobs:`;
+                    renderJobTable(data.job_data);
+                    if (data.filename) {
+                        currentDownloadFileName = data.filename;
+                        downloadButton.style.display = 'block'; // Show download button
+                    }
+                } else {
+                    showMessage(`Error: ${data.detail || 'Something went wrong.'}`, 'error');
+                }
+            } catch (error) {
+                showMessage(`Network error: ${error.message}`, 'error');
+            } finally {
+                showLoader(false);
+            }
+        });
+
+        // Handle download button click
+        downloadButton.addEventListener('click', () => {
+            if (currentDownloadFileName) {
+                // Download URL is now relative to the current origin
+                window.location.href = `/download/${currentDownloadFileName}`;
+            }
+        });
+
+        // Initial state on page load
+        document.addEventListener('DOMContentLoaded', () => {
+            hideMessage();
+            showLoader(false);
+            resultsSection.style.display = 'none';
+            downloadButton.style.display = 'none';
+        });
+    </script>
+</body>
+</html>

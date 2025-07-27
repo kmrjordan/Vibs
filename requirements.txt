@@ -1,0 +1,9 @@
+fastapi
+uvicorn
+pandas
+selenium
+webdriver-manager
+beautifulsoup4
+Jinja2              # New: Required for FastAPI's templating
+python-multipart    # Often a good idea for FastAPI forms/files
+lxml 

@@ -1,0 +1,349 @@
+/* project_root/static/css/style.css */
+
+/* --- GLOBAL STYLES & BACKGROUND IMAGE --- */
+body {
+  margin: 0;
+  padding: 0;
+  font-family: 'Inter', sans-serif; /* Using Inter font for modern look */
+  min-height: 100vh; /* Ensure body takes full viewport height */
+
+  /* Background Image - Using an open-source image from Unsplash */
+  background-image: url('https://images.unsplash.com/photo-1517048676732-d65bc937f952?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+
+  /* Flexbox for Centering the .App container */
+  display: flex;
+  justify-content: center; /* Centers its direct child (.App) horizontally */
+  align-items: center;   /* Centers its direct child (.App) vertically */
+}
+
+/* --- MAIN APP CONTAINER --- */
+.App {
+  padding: 20px;
+  background-color: rgba(255, 255, 255, 0.95); /* Slightly less transparent for better readability */
+  border-radius: 12px;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+
+  /* Responsive sizing for the main content box */
+  width: 95%; /* Take more width on smaller screens */
+  max-width: 800px; /* Max width for readability on larger screens */
+  min-height: 70vh; /* Minimum height */
+  max-height: 95vh; /* Added to prevent it from overflowing very small screens */
+  overflow-y: auto; /* Add scroll if content exceeds max-height */
+
+  /* Flexbox for internal content layout */
+  display: flex;
+  flex-direction: column;
+  align-items: center; /* Centers its children (form, table) horizontally */
+  justify-content: flex-start; /* Aligns its children to the top within the .App box */
+
+  color: #333;
+  animation: fadeIn 1s ease-out;
+}
+
+/* --- HEADER --- */
+.App-header {
+  animation: fadeIn 1s ease-out;
+  width: 100%;
+  padding-bottom: 20px;
+}
+
+h1 {
+  color: #2c3e50;
+  margin-bottom: 30px;
+  animation: slideInDown 0.8s ease-out;
+  text-align: center;
+  font-size: 2.5rem; /* Base font size for h1 */
+}
+
+/* --- FORM --- */
+.job-form {
+  background: white;
+  padding: 30px;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  width: 100%;
+  max-width: 741px; /* Max width for the form itself */
+  margin-bottom: 30px;
+  text-align: left;
+  animation: fadeInUp 0.8s ease-out 0.2s backwards;
+}
+
+.form-group {
+  margin-bottom: 20px;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: bold;
+  color: #555;
+  font-size: 1rem; /* Consistent label font size */
+}
+
+.form-group input[type="email"],
+.form-group input[type="password"],
+.form-group input[type="text"] {
+  width: calc(100% - 22px); /* Adjust padding */
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 1rem;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.form-group input[type="email"]:focus,
+.form-group input[type="password"]:focus,
+.form-group input[type="text"]:focus {
+  border-color: #007bff;
+  box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+  outline: none;
+}
+
+button[type="submit"] {
+  background-color: #007bff;
+  color: white;
+  padding: 12px 20px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 1.1rem;
+  transition: background-color 0.3s ease, transform 0.1s ease-out;
+  width: 100%;
+}
+
+button[type="submit"]:hover:not(:disabled) {
+  background-color: #0056b3;
+  transform: translateY(-2px);
+}
+
+button[type="submit"]:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+button[type="submit"]:disabled {
+  background-color: #cccccc;
+  cursor: not-allowed;
+  opacity: 0.8;
+}
+
+/* --- MESSAGES & LOADER --- */
+.message {
+  margin-top: 20px;
+  padding: 15px;
+  border-radius: 4px;
+  font-weight: bold;
+  animation: fadeIn 0.5s ease-out;
+  width: 90%; /* Ensure message takes up width */
+  max-width: 700px; /* Max width for message readability */
+}
+
+.message.error {
+  background-color: #f8d7da;
+  color: #721c24;
+  border: 1px solid #f5c6cb;
+}
+
+.message.success {
+  background-color: #d4edda;
+  color: #155724;
+  border: 1px solid #c3e6cb;
+}
+
+.loader-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 20px;
+  animation: fadeIn 0.5s ease-out;
+  font-size: 1rem;
+}
+
+.loader {
+  border: 4px solid #f3f3f3;
+  border-top: 4px solid #007bff;
+  border-radius: 50%;
+  width: 25px;
+  height: 25px;
+  animation: spin 1s linear infinite;
+  margin-right: 10px;
+}
+
+/* --- RESULTS SECTION & TABLE --- */
+.results-section {
+    width: 100%; /* Take full width of .App */
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* Center children horizontally */
+    margin-top: 30px;
+    animation: fadeIn 1s ease-out 0.5s backwards;
+}
+
+.results-section h2 {
+    font-size: 1.8rem; /* Responsive font size */
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+.download-button {
+  background-color: #28a745;
+  color: white;
+  padding: 10px 15px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 1rem;
+  margin-top: 20px;
+  margin-bottom: 20px;
+  transition: background-color 0.3s ease, transform 0.1s ease-out;
+}
+
+.download-button:hover {
+  background-color: #218838;
+  transform: translateY(-1px);
+}
+
+.download-button:active {
+  transform: translateY(0);
+}
+
+/* Table container for horizontal scrolling on small screens */
+.table-container {
+    width: 100%;
+    overflow-x: auto; /* Allows horizontal scrolling for the table */
+    -webkit-overflow-scrolling: touch; /* Improves scrolling on iOS */
+    border-radius: 8px; /* Match app container border-radius */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Match app container shadow */
+}
+
+.job-table {
+    width: 100%; /* Table takes full width of its container */
+    border-collapse: collapse;
+    background-color: white; /* Table background */
+    min-width: 700px; /* Ensure table has a minimum width to trigger scroll if needed */
+}
+
+.job-table th, .job-table td {
+    border: 1px solid #ddd;
+    padding: 10px;
+    text-align: left;
+    white-space: nowrap; /* Prevent text wrapping in table cells */
+    font-size: 0.9rem; /* Smaller font for table content */
+}
+
+.job-table th {
+    background-color: #e9ecef;
+    font-weight: bold;
+    padding: 12px 10px; /* Slightly more padding for headers */
+}
+
+.job-table tr:nth-child(even) {
+    background-color: #f9f9f9;
+}
+
+.job-table a {
+    color: #007bff;
+    text-decoration: none;
+}
+
+.job-table a:hover {
+    text-decoration: underline;
+}
+
+/* --- MEDIA QUERIES FOR SMALLER SCREENS --- */
+@media (max-width: 768px) {
+  h1 {
+    font-size: 2rem; /* Smaller title on tablets/large phones */
+  }
+
+  .job-form {
+    padding: 20px; /* Reduce form padding */
+  }
+
+  .form-group input {
+    font-size: 0.9rem; /* Smaller input text */
+  }
+
+  button[type="submit"], .download-button {
+    font-size: 1rem; /* Smaller button text */
+    padding: 10px 15px;
+  }
+
+  .message {
+    font-size: 0.9rem; /* Smaller message text */
+    padding: 10px;
+  }
+
+  .results-section h2 {
+    font-size: 1.5rem; /* Smaller results title */
+  }
+
+  .job-table th, .job-table td {
+    padding: 8px 5px; /* Reduce table cell padding */
+    font-size: 0.8rem; /* Even smaller font for table on small screens */
+  }
+
+  .job-table {
+      min-width: 600px; /* Adjust min-width for table on smaller screens if needed */
+  }
+}
+
+@media (max-width: 480px) {
+  h1 {
+    font-size: 1.8rem; /* Even smaller title on very small phones */
+  }
+
+  .App {
+    padding: 15px; /* Reduce overall app padding */
+    border-radius: 8px; /* Slightly smaller border-radius */
+  }
+
+  .job-form {
+    padding: 15px; /* Further reduce form padding */
+  }
+
+  .form-group label {
+    font-size: 0.9rem;
+  }
+
+  .job-table {
+      min-width: 500px; /* Further adjust min-width for table on very small screens */
+  }
+}
+
+
+/* --- KEYFRAME ANIMATIONS (Keep as is) --- */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideInDown {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
