@@ -219,8 +219,10 @@ async def download_file(filename: str):
 
     return FileResponse(path=file_path, filename=filename, media_type='text/csv')
 
-# --- Frontend Serving Endpoint ---
+@app.head("/", status_code=200) # Add this line
 @app.get("/", response_class=HTMLResponse)
 async def read_root(request: Request):
     """Serves the main HTML page."""
+    # For HEAD requests, FastAPI will automatically send the headers without the body.
+    # The return value from templates.TemplateResponse will still ensure correct headers for GET.
     return templates.TemplateResponse("index.html", {"request": request})
