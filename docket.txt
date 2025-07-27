@@ -1,6 +1,6 @@
 # Use a Python base image
-# Or 3.10, 3.11, etc., as per your preference. 'slim-buster' is good for smaller images.
-FROM python:3.9-slim-buster
+# Using 'slim-bullseye' (Debian 11) for active repository support.
+FROM python:3.9-slim-bullseye
 
 # Install necessary dependencies for Google Chrome and xvfb
 # These packages are generally sufficient for running headless Google Chrome
