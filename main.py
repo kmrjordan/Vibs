@@ -4,7 +4,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse, HTMLResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
-
+from selenium.webdriver.chrome.options import Options
 from pydantic import BaseModel
 import asyncio
 import pandas as pd
@@ -63,10 +63,11 @@ async def run_naukri_scraper(username: str, password: str, skill: str):
 
     try:
         options = Options()
+        options.binary_location = "/usr/bin/google-chrome-stable"  # set binary path explicitly
+        options.add_argument("--headless=new")
         options.add_argument("--headless")
         options.add_argument("--no-sandbox")
         options.add_argument("--disable-dev-shm-usage")
-        # Add these arguments for headless Chrome in Docker
         options.add_argument("--disable-gpu")
         options.add_argument("--window-size=1920,1080")
         options.add_argument("--disable-extensions")
