@@ -57,18 +57,29 @@ class JobSearchRequest(BaseModel):
     password: str
     skill: str
 
-# --- Selenium Scraper Logic (unchanged) ---
+# In your run_naukri_scraper function
 async def run_naukri_scraper(username: str, password: str, skill: str):
     job_list = []
-    job_counter = 0
-    generated_filename = None # This will now be a fixed filename
+    generated_filename = None
 
     try:
         options = Options()
-        # options.add_argument("--headless") # Uncomment for headless mode on server
+        options.add_argument("--headless")
         options.add_argument("--no-sandbox")
         options.add_argument("--disable-dev-shm-usage")
-        options.add_argument("--start-maximized")
+        options.add_argument("--start-maximized") # Might not be relevant in headless
+        # These are crucial for running Chrome in a Docker/headless environment
+        options.add_argument("--disable-gpu")
+        options.add_argument("--window-size=1920,1080")
+        options.add_argument("--disable-extensions")
+        options.add_argument("--proxy-server='direct://'")
+        options.add_argument("--proxy-bypass-list=*")
+        options.binary_location = os.environ.get("GOOGLE_CHROME_BIN", "/usr/bin/google-chrome") # Use environment variable
+        # Use ChromeDriverManager.install() for the driver itself
+        service = Service(ChromeDriverManager().install())
+        driver = webdriver.Chrome(service=service, options=options)
+        wait = WebDriverWait(driver, 15)
+        # ... rest of your scraping logic
         # Ensure Chrome driver path is correct or managed by webdriver_manager
         driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=options)
         wait = WebDriverWait(driver, 15)
