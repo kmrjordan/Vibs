@@ -56,6 +56,9 @@ WORKDIR /app
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
+# Add the directory where pip installs executables to the PATH
+ENV PATH="/usr/local/bin:${PATH}"
+
 # Copy the rest of your application code
 COPY . .
 
