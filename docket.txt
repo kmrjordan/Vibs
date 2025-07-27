@@ -1,8 +1,5 @@
-# Use a Python base image
-FROM python:3.9-slim-buster # Or 3.10, 3.11, etc., as per your preference. 'slim-buster' is good for smaller images.
 
-# Install necessary dependencies for Chrome
-# These packages are often required for Chrome to run headless in a Linux environment
+FROM python:3.9-slim-buster 
 RUN apt-get update && apt-get install -y \
     wget \
     gnupg \
